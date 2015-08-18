@@ -1,0 +1,27 @@
+{
+    "name": "flynsarmy/really-simple-qr-code",
+    "authors": [
+        {
+            "name": "flynsarmy",
+            "email": "flynsarmy@gmail.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type":"package",
+            "package": {
+                "name": "porkaria/php-qrcode-generator",
+                "version":"master",
+                "source": {
+                    "url": "https://github.com/porkaria/PHP-QRCODE-GENERATOR.git",
+                    "type": "git",
+                    "reference":"master"
+                }
+            }
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "porkaria/php-qrcode-generator": "master"
+    }
+}
