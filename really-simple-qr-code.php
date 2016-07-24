@@ -3,7 +3,7 @@
 
 Plugin Name: Really Simple QR Code
 Plugin URI: http://www.flynsarmy.com
-Version: 1
+Version: 2.0.0
 Author: Flynsarmy
 Author URI: http://www.flynsarmy.com
 Description: Adds a shortcode for generating QR codes

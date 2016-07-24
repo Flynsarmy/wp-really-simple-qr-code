@@ -16,6 +16,7 @@ The shortcode will now be available
 * Default parameters (all optional) include:
   - string = <current URL>
   - alt = "Scan the QR code"
-  - size = 120
+  - width = 256
+  - height = 256
 * You can pass any other paramters you like, they'll appear as attributes for the <img> tag.
 * Example usage: [rsqrcode string="your string here" size="80" title="my image title text" id="my_image_id" class="my_image_class"]
