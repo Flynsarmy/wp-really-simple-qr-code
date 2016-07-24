@@ -101,55 +101,40 @@ function rsqrcode_generate( $options )
 
 	$upload_dir = wp_upload_dir();
 	$defaults = array(
-		'size' => 6,
+		'width' => 256,
+        'height' => 256,
 		'cache' => true,
 		'dir' => 'wp-content' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'rsqrcode',
 		'string' => rsqrcode_current_url(),
-		'filetype' => 'jpeg',
-		'quality' => 80,
+
 	);
 	$options = array_merge($defaults, $options);
 
 	// Validation/Sanitization
 	$options['cache'] = !!$options['cache'];
-	$options['size'] = intval($options['size']);
-	$options['quality'] = intval($options['quality']);
+    $options['width'] = intval($options['width']);
+    $options['height'] = intval($options['height']);
 	$options['dir'] = trim($options['dir'], DIRECTORY_SEPARATOR);
 
 	if ( empty($options['string']) )
 		throw new Exception("You must specify a string option");
-	if ( !$options['size'] )
-		throw new Exception("Size option must be a valid integer above 0");
-	if ( !in_array($options['filetype'], array('jpeg', 'png')) )
-		throw new Exception("Only jpeg and png output filetypes are supported");
-	if ( $options['quality'] <= 0 || $options['quality'] > 100 )
-		throw new Exception("Quality option must be a valid integer from 1 to 100");
 
-	$relpath = $options['dir'] . DIRECTORY_SEPARATOR . $options['size'] . '_' . md5($options['string']) . '.' . $options['filetype'];
+	$relpath = $options['dir'] . DIRECTORY_SEPARATOR . $options['width'] . 'x' . $options['height'] . '_' . md5($options['string']) . '.png';
 	$abspath = ABSPATH . DIRECTORY_SEPARATOR . $relpath;
 
 	if ( !$options['cache'] || !file_exists($abspath) )
 	{
-		require_once(dirname(__FILE__)."/vendor/porkaria/php-qrcode-generator/qrcode/Image/QRCode.php");
+		require_once __DIR__.'/vendor/autoload.php';
 
 		// Create output directory if it doesn't already exist
 		if ( !is_dir(dirname($abspath)) && !mkdir(dirname($abspath)) )
 			throw new Exception("Could not create output directory '".dirname($abspath)."'");
 
-
-		$qr = new Image_QRCode();
-		$resource = $qr->makeCode($options['string'], array(
-			'module_size' => $options['size'],
-			'output_type' => 'return',
-		));
-
-		if ( $options['filetype'] == 'jpeg' )
-			$created = imagejpeg($resource, $abspath, $options['quality']);
-		else
-			$created = imagepng($resource, $abspath, $options['quality']);
-
-		if ( !$created )
-			throw new Exception("Unable to create " . $options['filetype'] . " of quality " . $options['quality'] . " at filepath '" . $abspath . "'");
+        $renderer = new \BaconQrCode\Renderer\Image\Png();
+        $renderer->setHeight(256);
+        $renderer->setWidth(256);
+        $writer = new \BaconQrCode\Writer($renderer);
+        $writer->writeFile($options['string'], $abspath);
 	}
 
 	return $relpath;
