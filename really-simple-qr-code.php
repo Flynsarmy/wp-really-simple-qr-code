@@ -103,6 +103,7 @@ function rsqrcode_generate( $options )
 	$defaults = array(
 		'width' => 256,
         'height' => 256,
+        'margin' => 0,
 		'cache' => true,
 		'dir' => 'wp-content' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'rsqrcode',
 		'string' => rsqrcode_current_url(),
@@ -114,6 +115,7 @@ function rsqrcode_generate( $options )
 	$options['cache'] = !!$options['cache'];
     $options['width'] = intval($options['width']);
     $options['height'] = intval($options['height']);
+    $options['margin'] = intval($options['margin']);
 	$options['dir'] = trim($options['dir'], DIRECTORY_SEPARATOR);
 
 	if ( empty($options['string']) )
@@ -131,8 +133,9 @@ function rsqrcode_generate( $options )
 			throw new Exception("Could not create output directory '".dirname($abspath)."'");
 
         $renderer = new \BaconQrCode\Renderer\Image\Png();
-        $renderer->setHeight(256);
-        $renderer->setWidth(256);
+        $renderer->setHeight($options['height']);
+        $renderer->setWidth($options['width']);
+        $renderer->setMargin($options['margin']);
         $writer = new \BaconQrCode\Writer($renderer);
         $writer->writeFile($options['string'], $abspath);
 	}
