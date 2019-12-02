@@ -2,8 +2,8 @@
 Contributors: flynsarmy
 Tags: qr, shortcode
 Requires at least: 3.2.1
-Tested up to: 4.5.3
-Stable tag: 2.0.0
+Tested up to: 5.3
+Stable tag: 2.0.1
 
 == Description ==
 
@@ -25,6 +25,9 @@ Stable tag: 2.0.0
 The shortcode will now be available
 
 == Changelog ==
+
+= 2.0.1 =
+* PHP 7.4 warning fix
 
 = 2.0 =
 

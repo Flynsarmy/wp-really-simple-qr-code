@@ -3,7 +3,7 @@
 
 Plugin Name: Really Simple QR Code
 Plugin URI: http://www.flynsarmy.com
-Version: 2.0.0
+Version: 2.0.1
 Author: Flynsarmy
 Author URI: http://www.flynsarmy.com
 Description: Adds a shortcode for generating QR codes
@@ -150,7 +150,7 @@ function rsqrcode_generate( $options )
  */
 function rsqrcode_current_url()
 {
-    $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";
+    $s = @$_SERVER["HTTPS"] == 'on' ? 's' : '';;
     $sp = strtolower($_SERVER["SERVER_PROTOCOL"]);
     $protocol = substr($sp, 0, strpos($sp, "/")) . $s;
     $port = in_array($_SERVER["SERVER_PORT"], array("80", '443')) ? "" : (":".$_SERVER["SERVER_PORT"]);
