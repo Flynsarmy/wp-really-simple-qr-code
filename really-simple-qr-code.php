@@ -3,7 +3,7 @@
 
 Plugin Name: Really Simple QR Code
 Plugin URI: http://www.flynsarmy.com
-Version: 2.0.1
+Version: 3.0.0
 Author: Flynsarmy
 Author URI: http://www.flynsarmy.com
 Description: Adds a shortcode for generating QR codes
@@ -112,7 +112,7 @@ function rsqrcode_generate( $options )
 	$options = array_merge($defaults, $options);
 
 	// Validation/Sanitization
-	$options['cache'] = !!$options['cache'];
+	$options['cache'] = false;//!!$options['cache'];
     $options['width'] = intval($options['width']);
     $options['height'] = intval($options['height']);
     $options['margin'] = intval($options['margin']);
@@ -132,10 +132,13 @@ function rsqrcode_generate( $options )
 		if ( !is_dir(dirname($abspath)) && !mkdir(dirname($abspath)) )
 			throw new Exception("Could not create output directory '".dirname($abspath)."'");
 
-        $renderer = new \BaconQrCode\Renderer\Image\Png();
-        $renderer->setHeight($options['height']);
-        $renderer->setWidth($options['width']);
-        $renderer->setMargin($options['margin']);
+        $renderer = new \BaconQrCode\Renderer\ImageRenderer(
+			new \BaconQrCode\Renderer\RendererStyle\RendererStyle($options['width'], $options['margin']),
+			new BaconQrCode\Renderer\Image\ImagickImageBackEnd
+		);
+        // $renderer->setHeight($options['height']);
+        // $renderer->setWidth($options['width']);
+        // $renderer->setMargin($options['margin']);
         $writer = new \BaconQrCode\Writer($renderer);
         $writer->writeFile($options['string'], $abspath);
 	}

@@ -8,6 +8,6 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "bacon/bacon-qr-code": "^1.0"
+        "bacon/bacon-qr-code": "^2.0"
     }
 }

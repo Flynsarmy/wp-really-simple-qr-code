@@ -3,7 +3,7 @@ Contributors: flynsarmy
 Tags: qr, shortcode
 Requires at least: 3.2.1
 Tested up to: 5.3
-Stable tag: 2.0.1
+Stable tag: 3.0.0
 
 == Description ==
 
@@ -26,7 +26,16 @@ The shortcode will now be available
 
 == Changelog ==
 
+= 3.0.0 =
+
+December 2, 2019
+
+* Updated bacon-qr-code dependency
+
 = 2.0.1 =
+
+December 2, 2019
+
 * PHP 7.4 warning fix
 
 = 2.0 =
