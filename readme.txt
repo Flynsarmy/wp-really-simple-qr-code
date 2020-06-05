@@ -3,7 +3,7 @@ Contributors: flynsarmy
 Tags: qr, shortcode
 Requires at least: 3.2.1
 Tested up to: 5.3
-Stable tag: 3.0.0
+Stable tag: 3.1.0
 
 == Description ==
 
@@ -14,6 +14,7 @@ Stable tag: 3.0.0
   - alt = "Scan the QR code"
   - width = 256
   - height = 256
+  - inline = false
 * You can pass any other paramters you like, they'll appear as attributes for the <img> tag.
 * Example usage: [rsqrcode string="your string here" size="80" title="my image title text" id="my_image_id" class="my_image_class"]
 
@@ -25,6 +26,12 @@ Stable tag: 3.0.0
 The shortcode will now be available
 
 == Changelog ==
+
+= 3.1.0 =
+
+June 5, 2020
+
+* Add support for inline QR codes
 
 = 3.0.0 =
 

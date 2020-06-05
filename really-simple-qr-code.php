@@ -3,7 +3,7 @@
 
 Plugin Name: Really Simple QR Code
 Plugin URI: http://www.flynsarmy.com
-Version: 3.0.0
+Version: 3.1.0
 Author: Flynsarmy
 Author URI: http://www.flynsarmy.com
 Description: Adds a shortcode for generating QR codes
@@ -13,7 +13,7 @@ Usage:
  * Use the shortcode [rsqrcode] within your string to generate the current URL
 
  * Default parameters (all optional) include:
-	string = <current URL>
+    string = <current URL>
     alt = "Scan the QR code"
     size = 120
 
@@ -25,59 +25,62 @@ Usage:
 
 /* Add the Shortcode */
 add_shortcode('rsqrcode', 'rsqrcode');
-function rsqrcode( $atts ) {
-	$atts = array_merge(array(
-		'alt' => 'Scan the QR code',
-		'width' => '200',
-		'height' => '200',
-	), (array)$atts);
+function rsqrcode($atts)
+{
+    $atts = array_merge(array(
+        'alt' => 'Scan the QR code',
+        'width' => '200',
+        'height' => '200',
+    ), (array)$atts);
 
-	$relpath = rsqrcode_generate($atts);
+    $relpath = rsqrcode_generate($atts);
 
-	// Clean up shortcode attributes so we only display relevant info on
-	// the returned IMG element
-	unset(
-		$atts['size'],
-		$atts['string'],
-		$atts['cache'],
-		$atts['dir'],
-		$atts['filetype'],
-		$atts['quality']
-	);
+    // Clean up shortcode attributes so we only display relevant info on
+    // the returned IMG element
+    unset(
+        $atts['size'],
+        $atts['string'],
+        $atts['cache'],
+        $atts['dir'],
+        $atts['filetype'],
+        $atts['quality'],
+        $atts['inline']
+    );
 
-	// Generate the image HTML
-	$html = '<img src="'.site_url($relpath).'" ';
-	// Add all our image attributes
-	foreach ( $atts as $att=>$value )
-		$html .= $att.'="'.htmlspecialchars($value).'" ';
-	$html .= '/>';
+    // Generate the image HTML
+    $html = '<img src="'.site_url($relpath).'" ';
+    // Add all our image attributes
+    foreach ($atts as $att=>$value) {
+        $html .= $att.'="'.htmlspecialchars($value).'" ';
+    }
+    $html .= '/>';
 
-	return $html;
+    return $html;
 
-	// // Sanitize input
-	// $size = max(10, intval($atts['size']));
-	// $string = urlencode($atts['string']);
-	// $atts = array_map('htmlspecialchars', $atts);
+    // // Sanitize input
+    // $size = max(10, intval($atts['size']));
+    // $string = urlencode($atts['string']);
+    // $atts = array_map('htmlspecialchars', $atts);
 
-	// // Don't add unnecessary attributes
-	// foreach ( $atts as $key=>$value )
-	// 	if ( empty($value) )
-	// 		unset($atts[$key]);
+    // // Don't add unnecessary attributes
+    // foreach ( $atts as $key=>$value )
+    // 	if ( empty($value) )
+    // 		unset($atts[$key]);
 
-	// // Grab the image URL
-	// $image_url = "https://chart.googleapis.com/chart?chs=" . $size . 'x' . $size . '&cht=qr&chl=' . $string;
+    // // Grab the image URL
+    // $image_url = "https://chart.googleapis.com/chart?chs=" . $size . 'x' . $size . '&cht=qr&chl=' . $string;
 
-	// // We dont' want size or string as image attributes
-	// unset($atts['size'], $atts['string']);
+    // // We dont' want size or string as image attributes
+    // unset($atts['size'], $atts['string']);
 
-	// // Generate the image HTML
-	// $html = '<img src="'.$image_url.'" ';
-	// // Add all our image attributes
-	// foreach ( $atts as $att=>$value )
-	// 	$html .= $att.'="'.$value.'" ';
-	// $html .= '/>';
+    // // Generate the image HTML
+    // $html = '<img src="'.$image_url.'" ';
+    // // Add all our image attributes
+    // foreach ( $atts as $att=>$value )
+    // 	$html .= $att.'="'.$value.'" ';
+    // $html .= '/>';
 
-	// return $html;
+    // return $html;
 }
 
 /**
@@ -94,56 +97,64 @@ function rsqrcode( $atts ) {
  *
  * @return string         File path to image relative to WP root
  */
-function rsqrcode_generate( $options )
+function rsqrcode_generate($options)
 {
-	if ( !is_array($options) )
-		throw new Exception("You must specify an options array");
+    if (!is_array($options)) {
+        throw new Exception("You must specify an options array");
+    }
 
-	$upload_dir = wp_upload_dir();
-	$defaults = array(
-		'width' => 256,
+    $upload_dir = wp_upload_dir();
+    $defaults = array(
+        'width' => 256,
         'height' => 256,
         'margin' => 0,
-		'cache' => true,
-		'dir' => 'wp-content' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'rsqrcode',
-		'string' => rsqrcode_current_url(),
+        'cache' => true,
+        'dir' => 'wp-content' . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'rsqrcode',
+        'string' => rsqrcode_current_url(),
+        'inline' => false,
+    );
+    $options = array_merge($defaults, $options);
 
-	);
-	$options = array_merge($defaults, $options);
-
-	// Validation/Sanitization
-	$options['cache'] = false;//!!$options['cache'];
+    // Validation/Sanitization
+    $options['cache'] = false;//!!$options['cache'];
     $options['width'] = intval($options['width']);
     $options['height'] = intval($options['height']);
     $options['margin'] = intval($options['margin']);
-	$options['dir'] = trim($options['dir'], DIRECTORY_SEPARATOR);
+    $options['dir'] = trim($options['dir'], DIRECTORY_SEPARATOR);
+    $options['inline'] = !!$options['inline'];
 
-	if ( empty($options['string']) )
-		throw new Exception("You must specify a string option");
+    if (empty($options['string'])) {
+        throw new Exception("You must specify a string option");
+    }
 
-	$relpath = $options['dir'] . DIRECTORY_SEPARATOR . $options['width'] . 'x' . $options['height'] . '_' . md5($options['string']) . '.png';
-	$abspath = ABSPATH . DIRECTORY_SEPARATOR . $relpath;
+    $relpath = $options['dir'] . DIRECTORY_SEPARATOR . $options['width'] . 'x' . $options['height'] . '_' . md5($options['string']) . '.png';
+    $abspath = ABSPATH . DIRECTORY_SEPARATOR . $relpath;
 
-	if ( !$options['cache'] || !file_exists($abspath) )
-	{
-		require_once __DIR__.'/vendor/autoload.php';
+    if (!$options['cache'] || $options['inline'] || !file_exists($abspath)) {
+        require_once __DIR__.'/vendor/autoload.php';
 
-		// Create output directory if it doesn't already exist
-		if ( !is_dir(dirname($abspath)) && !mkdir(dirname($abspath)) )
-			throw new Exception("Could not create output directory '".dirname($abspath)."'");
+        // Create output directory if it doesn't already exist
+        if (!$options['inline'] && !is_dir(dirname($abspath)) && !mkdir(dirname($abspath))) {
+            throw new Exception("Could not create output directory '".dirname($abspath)."'");
+        }
 
         $renderer = new \BaconQrCode\Renderer\ImageRenderer(
-			new \BaconQrCode\Renderer\RendererStyle\RendererStyle($options['width'], $options['margin']),
-			new BaconQrCode\Renderer\Image\ImagickImageBackEnd
-		);
+            new \BaconQrCode\Renderer\RendererStyle\RendererStyle($options['width'], $options['margin']),
+            new BaconQrCode\Renderer\Image\ImagickImageBackEnd
+        );
         // $renderer->setHeight($options['height']);
         // $renderer->setWidth($options['width']);
         // $renderer->setMargin($options['margin']);
         $writer = new \BaconQrCode\Writer($renderer);
-        $writer->writeFile($options['string'], $abspath);
-	}
 
-	return $relpath;
+        if ($options['inline']) {
+            $relpath = 'data:image/png;base64,' . base64_encode($writer->writeString($options['string']));
+        } else {
+            $writer->writeFile($options['string'], $abspath);
+        }
+    }
+
+    return $relpath;
 }
 
 /**
@@ -153,7 +164,7 @@ function rsqrcode_generate( $options )
  */
 function rsqrcode_current_url()
 {
-    $s = @$_SERVER["HTTPS"] == 'on' ? 's' : '';;
+    $s = @$_SERVER["HTTPS"] == 'on' ? 's' : '';
     $sp = strtolower($_SERVER["SERVER_PROTOCOL"]);
     $protocol = substr($sp, 0, strpos($sp, "/")) . $s;
     $port = in_array($_SERVER["SERVER_PORT"], array("80", '443')) ? "" : (":".$_SERVER["SERVER_PORT"]);
