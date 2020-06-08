@@ -148,7 +148,7 @@ function rsqrcode_generate($options)
         $writer = new \BaconQrCode\Writer($renderer);
 
         if ($options['inline']) {
-            $relpath = 'data:image/png;base64,' . base64_encode($writer->writeString($options['string']));
+            $relpath = 'data:image/png;charset=binary;base64,' . base64_encode($writer->writeString($options['string']));
         } else {
             $writer->writeFile($options['string'], $abspath);
         }
