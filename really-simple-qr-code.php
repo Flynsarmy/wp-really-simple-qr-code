@@ -131,21 +131,12 @@ function rsqrcode_generate($options)
     $abspath = ABSPATH . DIRECTORY_SEPARATOR . $relpath;
 
     if (!$options['cache'] || $options['inline'] || !file_exists($abspath)) {
-        require_once __DIR__.'/vendor/autoload.php';
-
         // Create output directory if it doesn't already exist
         if (!$options['inline'] && !is_dir(dirname($abspath)) && !mkdir(dirname($abspath))) {
             throw new Exception("Could not create output directory '".dirname($abspath)."'");
         }
 
-        $renderer = new \BaconQrCode\Renderer\ImageRenderer(
-            new \BaconQrCode\Renderer\RendererStyle\RendererStyle($options['width'], $options['margin']),
-            new BaconQrCode\Renderer\Image\ImagickImageBackEnd
-        );
-        // $renderer->setHeight($options['height']);
-        // $renderer->setWidth($options['width']);
-        // $renderer->setMargin($options['margin']);
-        $writer = new \BaconQrCode\Writer($renderer);
+        $writer = rsqrcode_get_writer($options['width'], $options['margin']);
 
         if ($options['inline']) {
             $relpath = 'data:image/png;charset=binary;base64,' . base64_encode($writer->writeString($options['string']));
@@ -155,6 +146,25 @@ function rsqrcode_generate($options)
     }
 
     return $relpath;
+}
+
+/**
+ * Undocumented function
+ *
+ * @param integer $width
+ * @param integer $margin
+ * @return \BaconQrCode\Writer
+ */
+function rsqrcode_get_writer(int $width, int $margin)
+{
+    require_once __DIR__.'/vendor/autoload.php';
+
+    $renderer = new \BaconQrCode\Renderer\ImageRenderer(
+        new \BaconQrCode\Renderer\RendererStyle\RendererStyle($width, $margin),
+        new BaconQrCode\Renderer\Image\ImagickImageBackEnd
+    );
+    
+    return new \BaconQrCode\Writer($renderer);
 }
 
 /**
