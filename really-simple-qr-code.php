@@ -25,7 +25,7 @@ Usage:
 
 /* Add the Shortcode */
 add_shortcode('rsqrcode', 'rsqrcode');
-function rsqrcode($atts)
+function rsqrcode(array $atts): string
 {
     $atts = array_merge(array(
         'alt' => 'Scan the QR code',
@@ -56,37 +56,19 @@ function rsqrcode($atts)
     $html .= '/>';
 
     return $html;
-
-    // // Sanitize input
-    // $size = max(10, intval($atts['size']));
-    // $string = urlencode($atts['string']);
-    // $atts = array_map('htmlspecialchars', $atts);
-
-    // // Don't add unnecessary attributes
-    // foreach ( $atts as $key=>$value )
-    // 	if ( empty($value) )
-    // 		unset($atts[$key]);
-
-    // // Grab the image URL
-    // $image_url = "https://chart.googleapis.com/chart?chs=" . $size . 'x' . $size . '&cht=qr&chl=' . $string;
-
-    // // We dont' want size or string as image attributes
-    // unset($atts['size'], $atts['string']);
-
-    // // Generate the image HTML
-    // $html = '<img src="'.$image_url.'" ';
-    // // Add all our image attributes
-    // foreach ( $atts as $att=>$value )
-    // 	$html .= $att.'="'.$value.'" ';
-    // $html .= '/>';
-
-    // return $html;
 }
 
 /**
  * Generate and cache a QR code image
  *
- * @param  array $options array(
+ * @param array{
+ *      ?size: int,
+ *      ?cache: bool,
+ *      ?dir: string,
+ *      'string': string,
+ *      ?filetype: string,
+ *      ?quality: int
+ * } $options array(
  * 		'size' => 6 							// (int) (optional) Size of QR code
  * 		'cache' => true 						// (bool) (optional) Serve a cached copy of the image if one exists
  * 		'dir' => 'wp-content/uploads/rsqrcode'	// (string) (optional) Relative path to cache directory
@@ -97,7 +79,7 @@ function rsqrcode($atts)
  *
  * @return string         File path to image relative to WP root
  */
-function rsqrcode_generate($options)
+function rsqrcode_generate(array $options): string
 {
     if (!is_array($options)) {
         throw new Exception("You must specify an options array");
@@ -155,7 +137,7 @@ function rsqrcode_generate($options)
  * @param integer $margin
  * @return \BaconQrCode\Writer
  */
-function rsqrcode_get_writer(int $width, int $margin)
+function rsqrcode_get_writer(int $width, int $margin): \BaconQrCode\Writer
 {
     require_once __DIR__.'/vendor/autoload.php';
 
@@ -163,7 +145,7 @@ function rsqrcode_get_writer(int $width, int $margin)
         new \BaconQrCode\Renderer\RendererStyle\RendererStyle($width, $margin),
         new BaconQrCode\Renderer\Image\ImagickImageBackEnd
     );
-    
+
     return new \BaconQrCode\Writer($renderer);
 }
 
@@ -172,7 +154,7 @@ function rsqrcode_get_writer(int $width, int $margin)
  *
  * @return string     current URL
  */
-function rsqrcode_current_url()
+function rsqrcode_current_url(): string
 {
     $s = @$_SERVER["HTTPS"] == 'on' ? 's' : '';
     $sp = strtolower($_SERVER["SERVER_PROTOCOL"]);
